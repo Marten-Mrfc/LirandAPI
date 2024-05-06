@@ -9,7 +9,7 @@ plugins {
 }
 
 val projectGroup = "lirand.api"
-val projectVersion = "0.8.0"
+val projectVersion = "0.8.1"
 
 group = projectGroup
 version = projectVersion
