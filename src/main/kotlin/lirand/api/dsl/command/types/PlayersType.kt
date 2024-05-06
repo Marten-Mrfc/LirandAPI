@@ -11,6 +11,7 @@ import lirand.api.dsl.command.types.extensions.TranslatableMessage
 import lirand.api.dsl.command.types.extensions.readUnquoted
 import lirand.api.dsl.command.types.extensions.suggestTranslatable
 import lirand.api.extensions.server.server
+import net.kyori.adventure.text.Component
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.TranslatableComponent
 import org.bukkit.OfflinePlayer
@@ -154,11 +155,11 @@ open class PlayersType(
 	companion object Instance : PlayersType(
 		allowedPlayers = { server.onlinePlayers.associateWith { null } },
 		notFoundExceptionType = ChatCommandExceptionType(
-			TranslatableComponent("argument.entity.notfound.player")
+			Component.translatable("argument.entity.notfound.player")
 		),
 		additionalSelectors = AdditionalSelectors.NONE,
 		invalidSelectorExceptionType = ChatCommandExceptionType(
-			TextComponent("'@a' cannot be used in a list of players.")
+			Component.translatable("'@a' cannot be used in a list of players.")
 		)
 	) {
 		private val comma = Regex(""",\s*""")

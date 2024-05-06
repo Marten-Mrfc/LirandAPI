@@ -9,6 +9,7 @@ import lirand.api.dsl.command.types.exceptions.ChatCommandExceptionType
 import lirand.api.dsl.command.types.exceptions.ChatCommandSyntaxException
 import lirand.api.dsl.command.types.extensions.readUnquoted
 import lirand.api.extensions.server.server
+import net.kyori.adventure.text.Component
 import net.md_5.bungee.api.chat.TranslatableComponent
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
@@ -20,7 +21,7 @@ import java.util.concurrent.CompletableFuture
 open class PlayerType(
 	open val allowedPlayers: (sender: Player?) -> Map<out OfflinePlayer, Message?> = Instance.allowedPlayers,
 	open val notFoundExceptionType: ChatCommandExceptionType = Instance.notFoundExceptionType
-) : WordType<Player> {
+) : WordType<Player>() {
 
 	/**
 	 * Returns a [Player] from the result of the [allowedPlayers]
@@ -74,7 +75,7 @@ open class PlayerType(
 	companion object Instance : PlayerType(
 		allowedPlayers = { server.onlinePlayers.associateWith { null } },
 		notFoundExceptionType = ChatCommandExceptionType(
-			TranslatableComponent("argument.entity.notfound.player")
+			Component.translatable("argument.entity.notfound.player")
 		)
 	)
 }

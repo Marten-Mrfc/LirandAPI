@@ -7,7 +7,7 @@ import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import lirand.api.dsl.command.types.exceptions.ChatCommandExceptionType
 import lirand.api.dsl.command.types.exceptions.ChatCommandSyntaxException
-import lirand.api.dsl.command.types.extensions.readUnquoted
+import net.kyori.adventure.text.Component
 import net.md_5.bungee.api.chat.TranslatableComponent
 import org.bukkit.entity.Player
 import java.util.concurrent.CompletableFuture
@@ -16,7 +16,7 @@ open class StateType(
 	open val trueCases: (sender: Player?) -> Map<String, Message?> = Instance.trueCases,
 	open val falseCases: (sender: Player?) -> Map<String, Message?> = Instance.falseCases,
 	open val unknownStateExceptionType: ChatCommandExceptionType = Instance.unknownStateExceptionType
-) : WordType<Boolean> {
+) : WordType<Boolean>() {
 
 	/**
 	 * Returns a `true` if the string returned by the given [reader]
@@ -28,9 +28,10 @@ open class StateType(
 	 * @throws ChatCommandSyntaxException if a state with the give name does not exist
 	 */
 	override fun parse(reader: StringReader): Boolean {
-		return when (reader.readUnquoted()) {
-			in trueCases(null) -> true
-			in falseCases(null) -> false
+		val input = reader.readString()
+		return when {
+			trueCases(null).containsKey(input) -> true
+			falseCases(null).containsKey(input) -> false
 			else -> throw unknownStateExceptionType.createWithContext(reader)
 		}
 	}
@@ -68,6 +69,6 @@ open class StateType(
 		trueCases = { mapOf("enable" to null) },
 		falseCases = { mapOf("disable" to null) },
 		unknownStateExceptionType =
-			ChatCommandExceptionType(TranslatableComponent("command.unknown.argument"))
+			ChatCommandExceptionType(Component.translatable("command.unknown.argument"))
 	)
 }

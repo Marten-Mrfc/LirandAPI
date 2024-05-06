@@ -65,7 +65,7 @@ fun Inventory.clone(
 		Inventory(type, owner, title)
 
 	inventory.contents = if (cloneItemStacks)
-		contents.map { it.clone() }.toTypedArray()
+		contents.map { it!!.clone() }.toTypedArray()
 	else
 		contents
 

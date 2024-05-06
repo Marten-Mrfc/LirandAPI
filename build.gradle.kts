@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	kotlin("jvm") version "1.8.21"
+	kotlin("jvm") version "1.9.22"
 	java
 	idea
 
@@ -16,9 +16,10 @@ version = projectVersion
 
 repositories {
 	mavenCentral()
+	maven("https://repo.papermc.io/repository/maven-public/")
 	maven("https://repo.codemc.io/repository/maven-snapshots/")
-	maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
 	maven("https://libraries.minecraft.net")
+	maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
 }
 
 dependencies {
@@ -27,7 +28,7 @@ dependencies {
 	compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-core:1.5.0")
 	compileOnly("org.jetbrains.kotlin:kotlin-reflect:1.8.21")
 
-	compileOnly("org.spigotmc:spigot-api:1.16.1-R0.1-SNAPSHOT")
+	compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
 	compileOnly("com.mojang:brigadier:1.0.18")
 
 	api("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.11.0")
@@ -39,12 +40,12 @@ dependencies {
 java {
 	withSourcesJar()
 
-	val javaVersion = JavaVersion.toVersion(8)
+	val javaVersion = JavaVersion.toVersion(21)
 	sourceCompatibility = javaVersion
 }
 
 tasks.withType<KotlinCompile>().configureEach {
-	kotlinOptions.jvmTarget = "1.8"
+	kotlinOptions.jvmTarget = "21"
 	kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
 }
 

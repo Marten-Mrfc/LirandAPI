@@ -10,8 +10,8 @@ import com.mojang.brigadier.tree.ArgumentCommandNode
 import lirand.api.dsl.command.types.*
 import lirand.api.dsl.command.types.exceptions.ChatCommandExceptionType
 import lirand.api.dsl.command.types.extensions.until
-import lirand.api.extensions.server.server
-import net.md_5.bungee.api.chat.TranslatableComponent
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.TranslatableComponent
 import java.util.concurrent.CompletableFuture
 
 class CompoundPrefixedType(
@@ -19,7 +19,7 @@ class CompoundPrefixedType(
 ) : Type<Any> {
 
 	private val unknownPrefixExceptionType = ChatCommandExceptionType {
-		TranslatableComponent("argument.id.unknown", it[0])
+		Component.translatable("argument.id.unknown", Component.text(it[0].toString()))
 	}
 
 	override fun parse(reader: StringReader): Any {

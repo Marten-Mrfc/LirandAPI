@@ -9,10 +9,12 @@ import lirand.api.extensions.chat.SuggestCommandClickEvent
 import lirand.api.extensions.chat.sendMessage
 import lirand.api.extensions.chat.toComponent
 import lirand.api.utilities.isOverridden
-import net.md_5.bungee.api.ChatColor
-import net.md_5.bungee.api.chat.BaseComponent
-import net.md_5.bungee.api.chat.TextComponent
-import net.md_5.bungee.api.chat.TranslatableComponent
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.TranslatableComponent
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.Style
+import net.kyori.adventure.text.format.TextDecoration
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.PluginIdentifiableCommand
@@ -21,12 +23,6 @@ import java.lang.reflect.Method
 import kotlin.math.max
 import kotlin.math.min
 
-/**
- * A [Command] subclass that forwards execution to a underlying `CommandDispatcher`.
- *
- * **Note:**
- * This class was adapted from Spigot's `VanillaCommand`.
- */
 class DispatcherCommand(
 	name: String,
 	private val plugin: Plugin,
@@ -35,15 +31,6 @@ class DispatcherCommand(
 	aliases: List<String>
 ) : Command(name, "", usage, aliases), PluginIdentifiableCommand {
 
-	/**
-	 * Forwards execution with the rejoined label and arguments to the underlying
-	 * [CommandDispatcher] if the [sender] has sufficient permission.
-	 *
-	 * @param sender the sender
-	 * @param label the label
-	 * @param arguments the arguments
-	 * @return true
-	 */
 	override fun execute(sender: CommandSender, label: String, vararg arguments: String): Boolean {
 		if (!testPermission(sender)) {
 			return true
@@ -59,14 +46,10 @@ class DispatcherCommand(
 			dispatcher.execute(reader, sender)
 		} catch (exception: CommandSyntaxException) {
 			if (exception is ChatCommandSyntaxException) {
-				sender.sendMessage(exception.chatMessage.apply {
-					color = ChatColor.RED
-				})
+				sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>${exception.chatMessage}</red>"))
 			}
 			else {
-				sender.sendMessage(exception.rawMessage.toComponent().apply {
-					color = ChatColor.RED
-				})
+				sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>${exception.rawMessage.toComponent()}</red>"))
 			}
 
 			report(sender, exception.input, exception.cursor)
@@ -79,50 +62,39 @@ class DispatcherCommand(
 		return plugin
 	}
 
-
-
 	private fun report(sender: CommandSender, input: String?, cursor: Int) {
 		if (input == null || cursor < 0) return
 
 		val index = min(input.length, cursor)
 		val errorStart = input.lastIndexOf(' ', index - 1) + 1
 
-		val failedCommandMessage = TextComponent().apply {
-			color = ChatColor.GRAY
-			clickEvent = SuggestCommandClickEvent(input)
-		}
+		val failedCommandMessage = Component.text().colorIfAbsent(NamedTextColor.GRAY)
 
 		if (errorStart > 10) {
-			failedCommandMessage.addExtra("...")
+			failedCommandMessage.append(Component.text("..."))
 		}
-		failedCommandMessage.addExtra(input.substring(max(0, errorStart - 10), errorStart))
+		failedCommandMessage.append(Component.text(input.substring(max(0, errorStart - 10), errorStart)))
 
 		if (errorStart < input.length) {
-			val error = TextComponent(input.substring(errorStart, cursor)).apply {
-				color = ChatColor.RED
-				isUnderlined = true
-			}
-			failedCommandMessage.addExtra(error)
+			val error = Component.text(input.substring(errorStart, cursor)).colorIfAbsent(NamedTextColor.RED).decorate(
+				TextDecoration.UNDERLINED)
+			failedCommandMessage.append(error)
 		}
 
-		val context = TranslatableComponent("command.context.here").apply {
-			color = ChatColor.RED
-			isItalic = true
-		}
-		failedCommandMessage.addExtra(context)
+		val context = Component.translatable("command.context.here").colorIfAbsent(NamedTextColor.RED).style(Style.style(TextDecoration.ITALIC))
+		failedCommandMessage.append(context)
 
-
-		sender.sendMessage(failedCommandMessage)
+		sender.sendMessage(failedCommandMessage.build())
 	}
 
-	private fun Message.toComponent(): BaseComponent {
+	private fun Message.toComponent(): Component {
 		val messageClass = this::class.java
 
 		return if (messageClass.simpleName == "ChatMessage") {
 			verifyChatMessageClass(messageClass)
 			val key = chatMessageGetKeyMethod.invoke(this) as String
 			val args = chatMessageGetArgsMethod.invoke(this) as Array<*>
-			TranslatableComponent(key, *args)
+			Component.translatable(key, *args.map { Component.text(it.toString()) }.toTypedArray())
 		}
 		else {
 			string.toComponent()
@@ -136,7 +108,6 @@ class DispatcherCommand(
 		}
 		return command
 	}
-
 
 	private companion object {
 		lateinit var chatMessageGetKeyMethod: Method

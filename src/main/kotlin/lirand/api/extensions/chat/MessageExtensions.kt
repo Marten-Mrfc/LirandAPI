@@ -1,89 +1,68 @@
-@file:Suppress("MemberVisibilityCanBePrivate")
-
 package lirand.api.extensions.chat
 
-import net.md_5.bungee.api.ChatColor
-import net.md_5.bungee.api.ChatMessageType
-import net.md_5.bungee.api.chat.BaseComponent
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.TextComponent
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.title.Title
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import java.awt.Color
+import java.time.Duration
 
-/**
- * Creates a new [ChatColor] instance from the provided
- * hex code.
- * Format example: `"#4BD6CB"`
- */
-fun chatColor(hex: String): ChatColor = ChatColor.of(hex)
-
-/**
- * Creates a new [ChatColor] instance from the provided
- * hex code.
- * Format example: `0x4BD6CB`
- */
-fun chatColor(rgb: Int): ChatColor = ChatColor.of(Color(rgb))
-
-
-
-/**
- * Sends a message built by [builder].
- *
- * @param builder the builder of the message
- */
-inline fun CommandSender.sendMessage(
-	crossinline builder: ComponentBaseBuilder.() -> Unit
-) = sendMessage(ComponentBaseBuilder().apply(builder).build())
-
-/**
- * Sends the given [component].
- */
-fun CommandSender.sendMessage(component: BaseComponent) =
-	spigot().sendMessage(component)
-
-/**
- * Sends the given [components] as an action bar message.
- */
-fun CommandSender.sendMessage(vararg components: BaseComponent) {
-	spigot().sendMessage(*components)
+fun chatColor(hex: String): NamedTextColor {
+	val color = NamedTextColor.NAMES.value(hex)
+	return color ?: NamedTextColor.WHITE
 }
 
-/**
- * @param mainText title text
- * @param subText subtitle text
- * @param fadeIn time in ticks for titles to fade in
- * @param stay time in ticks for titles to stay
- * @param fadeOut time in ticks for titles to fade out
- */
+fun chatColor(rgb: Int): NamedTextColor {
+	val color = NamedTextColor.NAMES.value(Integer.toHexString(rgb))
+	return color ?: NamedTextColor.WHITE
+}
+
+inline fun CommandSender.sendMessage(
+	crossinline builder: TextComponent.Builder.() -> Unit
+) = sendMessage(Component.text().apply(builder))
+
+fun CommandSender.sendMessage(component: Component) {
+	this.sendMessage(component)
+}
+
+fun CommandSender.sendMessage(vararg components: Component) {
+	components.forEach { this.sendMessage(it) }
+}
+
 fun Player.title(
 	mainText: String? = null,
 	subText: String? = null,
 	fadeIn: Int = 10,
 	stay: Int = 70,
-	fadeOut: Int = 20,
-) = sendTitle(mainText, subText, fadeIn, stay, fadeOut)
+	fadeOut: Int = 20
+) {
+	val titleComponent = Component.text()
+		.content(mainText ?: "")
+		.build()
 
-/**
- * Sends the given [message] as an action bar message.
- */
-fun Player.actionBar(message: String) = actionBar(message.toComponent())
-
-/**
- * Sends the given [message] as an action bar message.
- */
-fun Player.actionBar(message: BaseComponent) {
-	spigot().sendMessage(ChatMessageType.ACTION_BAR, message)
+	val subtitleComponent = Component.text()
+		.content(subText ?: "")
+		.build()
+	val title = Title.title(titleComponent, subtitleComponent, Title.Times.times(Duration.ofSeconds(fadeIn.toLong()), Duration.ofSeconds(stay.toLong()), Duration.ofSeconds(fadeOut.toLong())))
+	this.showTitle(title)
 }
 
-/**
- * Sends the given [messages] as an action bar message.
- */
-fun Player.actionBar(vararg messages: BaseComponent) {
-	spigot().sendMessage(ChatMessageType.ACTION_BAR, *messages)
+fun Player.actionBar(message: String) {
+	this.sendActionBar(Component.text(message))
 }
 
-/**
- * Sends a message built by [builder] as an action bar message.
- */
+fun Player.actionBar(message: Component) {
+	this.sendActionBar(message)
+}
+
+fun Player.actionBar(vararg messages: Component) {
+	messages.forEach { this.sendActionBar(it) }
+}
+
 inline fun Player.actionBar(
-	crossinline builder: ComponentBaseBuilder.() -> Unit
-) = actionBar(ComponentBaseBuilder().apply(builder).build())
+	crossinline builder: TextComponent.Builder.() -> Unit
+) {
+	val message = Component.text().apply(builder).build()
+	this.sendActionBar(message)
+}

@@ -3,13 +3,13 @@ package lirand.api.dsl.command.types.exceptions
 import com.mojang.brigadier.ImmutableStringReader
 import com.mojang.brigadier.exceptions.CommandExceptionType
 import lirand.api.extensions.chat.toComponent
-import net.md_5.bungee.api.chat.BaseComponent
+import net.kyori.adventure.text.Component
 
 class ChatCommandExceptionType(
-	val messageBuilder: (Array<out Any>) -> BaseComponent
+	val messageBuilder: (Array<out Any>) -> Unit
 ) : CommandExceptionType {
 
-	constructor(message: BaseComponent) : this({ message })
+	constructor(message: Component) : this({ message })
 	constructor(message: String) : this(message.toComponent())
 
 	fun create(vararg args: Any): ChatCommandSyntaxException {

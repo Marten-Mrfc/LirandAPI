@@ -7,7 +7,6 @@ import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import lirand.api.dsl.command.types.exceptions.ChatCommandExceptionType
 import lirand.api.dsl.command.types.exceptions.ChatCommandSyntaxException
-import lirand.api.dsl.command.types.extensions.readUnquoted
 import net.md_5.bungee.api.chat.TranslatableComponent
 import org.bukkit.entity.Player
 import java.util.concurrent.CompletableFuture
@@ -21,7 +20,7 @@ open class EnumType<T : Enum<T>>(
 	open val notFoundExceptionType: ChatCommandExceptionType = ChatCommandExceptionType {
 		TranslatableComponent("argument.id.unknown", it[0])
 	}
-) : WordType<T> {
+) : WordType<T>() {
 
 	private val enumConstants = clazz.enumConstants.associateBy { it.name.lowercase() }
 
@@ -35,7 +34,7 @@ open class EnumType<T : Enum<T>>(
 	 * @throws ChatCommandSyntaxException if a [T] with the given key does not exist
 	 */
 	override fun parse(reader: StringReader): T {
-		val name = reader.readUnquoted().lowercase()
+		val name = reader.readString().lowercase()
 
 		return enumConstants[name]?.takeIf { it in allowedConstants(null) }
 			?: throw notFoundExceptionType.createWithContext(reader, name)

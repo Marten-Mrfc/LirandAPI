@@ -1,73 +1,32 @@
 package lirand.api.extensions.chat
 
-import net.md_5.bungee.api.chat.BaseComponent
-import net.md_5.bungee.api.chat.TextComponent
-
-inline fun chatComponent(crossinline builder: ComponentBaseBuilder.() -> Unit): BaseComponent {
-	return ComponentBaseBuilder().apply(builder).build()
-}
+import lirand.api.extensions.chat.toComponent
+import net.kyori.adventure.text.Component
 
 class ComponentBaseBuilder {
 
-	@PublishedApi
-	internal val siblingText = TextComponent("")
+	private val components = mutableListOf<Component>()
 
-	/**
-	 * Append text to the parent.
-	 *
-	 * @param text the raw text (without formatting)
-	 * @param builder the builder which can be used to set the style and add child text components
-	 */
-	inline fun add(
-		text: String = "",
-		crossinline builder: TextComponent.() -> Unit = {}
-	) {
-		siblingText.addExtra(TextComponent(text).apply(builder))
+	fun add(text: String = "", builder: Component.() -> Unit = {}) {
+		components.add(Component.text(text).apply(builder))
 	}
 
-	/**
-	 * Append text to the parent.
-	 *
-	 * @param component the component instance
-	 * @param builder the builder which can be used to set the style and add child text components
-	 */
-	inline fun <C : BaseComponent> add(
-		component: C,
-		crossinline builder: C.() -> Unit = {}
-	) {
-		siblingText.addExtra((component.duplicate() as C).apply(builder))
+	fun add(component: Component, builder: Component.() -> Unit = {}) {
+		components.add(component.apply(builder))
 	}
 
-	/**
-	 * Append the given legacy text to the parent. This
-	 * allows you to use legacy color codes (e.g. `§c` for red).
-	 * It is **not** recommended using this.
-	 *
-	 * @param text the text instance
-	 * @param builder the builder which can be used to set the style and add child text components
-	 */
-	inline fun addLegacy(
-		text: String,
-		crossinline builder: TextComponent.() -> Unit = {}
-	) {
-		siblingText.addExtra(text.toComponent().apply(builder))
+	fun addLegacy(text: String, builder: Component.() -> Unit = {}) {
+		components.add(text.toComponent().apply(builder))
 	}
 
-	/**
-	 * Adds a line break.
-	 */
 	fun addNewLine() {
-		siblingText.addExtra(TextComponent("\n"))
+		components.add(Component.newline())
 	}
 
-	/**
-	 * Adds an empty line.
-	 */
 	fun addEmptyLine() {
 		addNewLine()
 		addNewLine()
 	}
 
-
-	fun build() = siblingText.duplicate()
+	fun build() = Component.text().append(components).build()
 }

@@ -1,98 +1,54 @@
 package lirand.api.extensions.chat
 
-import lirand.api.extensions.other.toId
-import lirand.api.nbt.tagNbtData
-import net.md_5.bungee.api.chat.BaseComponent
-import net.md_5.bungee.api.chat.ClickEvent
-import net.md_5.bungee.api.chat.HoverEvent
-import net.md_5.bungee.api.chat.ItemTag
-import net.md_5.bungee.api.chat.TextComponent
-import net.md_5.bungee.api.chat.hover.content.Item
-import net.md_5.bungee.api.chat.hover.content.Text
-import org.bukkit.entity.Entity
+import net.kyori.adventure.key.Key
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.JoinConfiguration
+import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.event.ClickEvent
+import net.kyori.adventure.text.event.HoverEvent
 import org.bukkit.inventory.ItemStack
-import net.md_5.bungee.api.chat.hover.content.Entity as HoverEntity
+import org.bukkit.entity.Entity
+private val mm = MiniMessage.builder().build()
 
 fun String.toComponent() =
-	TextComponent(*TextComponent.fromLegacyText(this))
+    mm.deserialize(this)
 
 fun Array<String>.toComponent() =
-	TextComponent(*map { it.toComponent() }.toTypedArray())
+    Component.join(JoinConfiguration.separator(Component.newline()), map { mm.deserialize(it) })
 
 fun Collection<String>.toComponent() =
-	TextComponent(*map { it.toComponent() }.toTypedArray())
+    Component.join(JoinConfiguration.separator(Component.newline()), map { mm.deserialize(it) })
 
-
-
-fun HoverTextEvent(vararg components: BaseComponent): HoverEvent {
-	return HoverEvent(
-		HoverEvent.Action.SHOW_TEXT,
-		Text(components)
-	)
+fun HoverTextEvent(text: String): HoverEvent<Component> {
+    return HoverEvent.showText(mm.deserialize(text))
 }
 
-inline fun HoverTextEvent(crossinline builder: ComponentBaseBuilder.() -> Unit): HoverEvent {
-	return HoverEvent(
-		HoverEvent.Action.SHOW_TEXT,
-		Text(arrayOf(ComponentBaseBuilder().apply(builder).build()))
-	)
+fun HoverItemEvent(itemStack: ItemStack): HoverEvent.ShowItem {
+    val itemKey = Key.key(itemStack.type.key.namespace(), itemStack.type.key.value())
+    return HoverEvent.ShowItem.showItem(itemKey, itemStack.amount)
 }
 
-fun HoverItemEvent(itemStack: ItemStack): HoverEvent {
-	return HoverEvent(
-		HoverEvent.Action.SHOW_ITEM,
-		Item(
-			itemStack.type.toId(),
-			itemStack.amount,
-			ItemTag.ofNbt(itemStack.tagNbtData.toString())
-		)
-	)
+fun HoverEntityEvent(entity: Entity): HoverEvent.ShowEntity {
+    val entityTypeKey = Key.key(entity.type.key.namespace(), entity.type.key.value())
+    return HoverEvent.ShowEntity.showEntity(entityTypeKey, entity.uniqueId, Component.text(entity.name))
 }
-
-fun HoverEntityEvent(entity: Entity): HoverEvent {
-	return HoverEvent(
-		HoverEvent.Action.SHOW_ENTITY,
-		HoverEntity(
-			entity.type.toId(),
-			entity.uniqueId.toString(),
-			entity.customName?.toComponent() ?: entity.name.toComponent()
-		)
-	)
-}
-
-
 
 fun RunCommandClickEvent(command: String): ClickEvent {
-	return ClickEvent(
-		ClickEvent.Action.RUN_COMMAND,
-		command
-	)
+    return ClickEvent.runCommand(command)
 }
 
 fun SuggestCommandClickEvent(command: String): ClickEvent {
-	return ClickEvent(
-		ClickEvent.Action.SUGGEST_COMMAND,
-		command
-	)
+    return ClickEvent.suggestCommand(command)
 }
 
 fun CopyTextClickEvent(text: String): ClickEvent {
-	return ClickEvent(
-		ClickEvent.Action.COPY_TO_CLIPBOARD,
-		text
-	)
+    return ClickEvent.copyToClipboard(text)
 }
 
 fun OpenUrlClickEvent(url: String): ClickEvent {
-	return ClickEvent(
-		ClickEvent.Action.OPEN_URL,
-		url
-	)
+    return ClickEvent.openUrl(url)
 }
 
 fun ChangePageClickEvent(page: Int): ClickEvent {
-	return ClickEvent(
-		ClickEvent.Action.CHANGE_PAGE,
-		page.toString()
-	)
+    return ClickEvent.changePage(page)
 }

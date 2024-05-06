@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture
 open class EnchantmentType(
 	open val allowedEnchantments: (sender: Player?) -> Map<out Enchantment, Message?> = Instance.allowedEnchantments,
 	open val notFoundExceptionType: ChatCommandExceptionType = Instance.notFoundExceptionType
-) : WordType<Enchantment> {
+) : WordType<Enchantment>() {
 
 	/**
 	 * Returns an [Enchantment] from the result of the [allowedEnchantments]

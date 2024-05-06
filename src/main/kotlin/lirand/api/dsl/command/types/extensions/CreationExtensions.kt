@@ -1,5 +1,6 @@
 package lirand.api.dsl.command.types.extensions
 
+import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.DoubleArgumentType
 import com.mojang.brigadier.arguments.FloatArgumentType
@@ -9,8 +10,11 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import lirand.api.dsl.command.types.WordType
 
 
-val WordType: WordType<String> = WordType { reader -> reader.readUnquoted() }
-
+val wordType: WordType<String> = object : WordType<String>() {
+	override fun parse(reader: StringReader): String {
+		return reader.readString()
+	}
+}
 val QuotableStringType: StringArgumentType = StringArgumentType.string()
 
 val GreedyStringType: StringArgumentType = StringArgumentType.greedyString()

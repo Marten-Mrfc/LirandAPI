@@ -4,7 +4,7 @@ import org.bukkit.Axis
 import org.bukkit.Location
 import org.bukkit.World
 
-open class RelativeLocation(
+class RelativeLocation(
 	world: World? = null,
 	x: Double = 0.0,
 	y: Double = 0.0,

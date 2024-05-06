@@ -1,5 +1,12 @@
 # Lirand API
 
+**THIS IS A FORK OF THE Lirand API BECAUSE IT WAS OUTDATED!**
+
+**THIS IS NOT 100% TESTED AND MAY CONTAIN BUGS.**\
+**PROBABLY CONTAINS MANY THINGS THAT STILL NEED CHANGE MAKE PULL REQUESTS IF YOU WANT TO HELP!**
+
+
+
 Lirand API allows you to develop Spigot plugins faster, easier 
 and more Kotlin-like way.
 

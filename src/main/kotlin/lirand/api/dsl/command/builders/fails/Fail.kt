@@ -1,25 +1,31 @@
-package lirand.api.dsl.command.builders.fails
+package lirand.api.dsl.command.builders
 
-import lirand.api.dsl.command.builders.BrigadierCommandContext
 import lirand.api.extensions.chat.ComponentBaseBuilder
-import lirand.api.extensions.chat.toComponent
-import net.md_5.bungee.api.chat.BaseComponent
-import net.md_5.bungee.api.chat.TextComponent
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.TextComponent
+import net.kyori.adventure.text.minimessage.MiniMessage
 
+// Define a custom exception for command failures
+class CommandFailException(message: Component? = null) : RuntimeException(message?.toString())
 
+// Extension function to throw a failure with a given message component
 fun BrigadierCommandContext<*>.fail(
-	message: BaseComponent? = null
-): Nothing = throw CommandFailException(message, source)
+	message: Component? = null
+): Nothing = throw CommandFailException(message)
 
+// Extension function to throw a failure with multiple message components
 fun BrigadierCommandContext<*>.fail(
-	message: BaseComponent,
-	vararg messages: BaseComponent
-): Nothing = throw CommandFailException(TextComponent(message, *messages), source)
-
+	message: Component,
+	vararg messages: Component
+): Nothing {
+	val newMessage = messages.fold(message) { acc, component -> acc.append(component) }
+	throw CommandFailException(newMessage)
+}
+// Extension function to throw a failure with a builder for message components
 inline fun BrigadierCommandContext<*>.fail(
 	crossinline builder: ComponentBaseBuilder.() -> Unit
-): Nothing = throw CommandFailException(ComponentBaseBuilder().apply(builder).build(), source)
+): Nothing = throw CommandFailException(ComponentBaseBuilder().apply(builder).build())
 
 fun BrigadierCommandContext<*>.fail(
 	message: String
-): Nothing = fail(message.toComponent())
+): Nothing = fail(Component.text(message))

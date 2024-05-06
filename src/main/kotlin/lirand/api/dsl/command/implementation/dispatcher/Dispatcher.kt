@@ -86,8 +86,7 @@ open class Dispatcher protected constructor(private val root: BrigadierRoot) :
 
 		if (event.type == ServerLoadEvent.LoadType.STARTUP) {
 			walker.prune(commandDispatcher.root, root.children)
-		}
-		else {
+		} else {
 			update()
 		}
 	}
@@ -99,7 +98,11 @@ open class Dispatcher protected constructor(private val root: BrigadierRoot) :
 		private val dedicatedServer = server::class.java.getMethod("getServer").invoke(server)
 		private val serverGetCommandMapMethod = server::class.java.getMethod("getCommandMap")
 		private val serverGetCommandDispatcherMethod = dedicatedServer::class.java.methods
-			.find { it.returnType.simpleName == "CommandDispatcher" && it.parameterCount == 0 }!!
+			.find { it.returnType.simpleName == "CommandDispatcher" && it.parameterCount == 0 }
+			?: dedicatedServer::class.java.methods
+				.find { it.returnType.simpleName == "Commands" && it.parameterCount == 0 }
+			?: throw IllegalStateException("Could not find the method getCommandDispatcher in the server class")
+
 		private val commandsGetDispatcherMethod = serverGetCommandDispatcherMethod.returnType.methods
 			.find { it.returnType == CommandDispatcher::class.java && it.parameterCount == 0 }!!
 
@@ -116,7 +119,8 @@ open class Dispatcher protected constructor(private val root: BrigadierRoot) :
 			}
 
 			val prefix = plugin.name.lowercase()
-			val map = SpigotMap(prefix, plugin,
+			val map = SpigotMap(
+				prefix, plugin,
 				serverGetCommandMapMethod.invoke(server) as SimpleCommandMap
 			)
 			val root = BrigadierRoot(prefix, map)

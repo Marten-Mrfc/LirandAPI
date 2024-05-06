@@ -119,8 +119,8 @@ class OnlinePlayerMap<V>(
 	override fun quit(player: Player): V? {
 		return if (containsKey(player)) {
 			remove(player).also {
-				quitCallbacks[player]?.invoke(player, it as V)
-					?: defaultQuitCallback?.invoke(player, it as V)
+				it?.let { it1 -> quitCallbacks[player]?.invoke(player, it1) }
+					?: it?.let { it1 -> defaultQuitCallback?.invoke(player, it1) }
 
 				removeCallback(player)
 			}

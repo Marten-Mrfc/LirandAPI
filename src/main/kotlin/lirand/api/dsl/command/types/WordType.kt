@@ -7,7 +7,7 @@ import com.mojang.brigadier.arguments.StringArgumentType
  *
  * @param T the type of the argument
  */
-fun interface WordType<T> : Type<T> {
+abstract class WordType<T> : Type<T> {
 
 	/**
 	 * @return a single word [StringArgumentType]
