@@ -6,8 +6,11 @@ import org.bukkit.WorldCreator
 
 val server get() = Bukkit.getServer()
 
-val nmsVersion = server.javaClass.getPackage().name
-	.split(".")[3].substring(1)
+val nmsVersion = if (server.javaClass.getPackage().name.split(".").size > 3) {
+	server.javaClass.getPackage().name.split(".")[3].substring(1)
+} else {
+	"" // default value
+}
 
 val splitNmsVersion = nmsVersion.split("_")
 val nmsNumberVersion: Int = if (splitNmsVersion.size > 1) {
