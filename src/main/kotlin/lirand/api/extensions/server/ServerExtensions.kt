@@ -9,8 +9,13 @@ val server get() = Bukkit.getServer()
 val nmsVersion = server.javaClass.getPackage().name
 	.split(".")[3].substring(1)
 
-val nmsNumberVersion: Int = nmsVersion.split("_")[1].toInt()
-
+val splitNmsVersion = nmsVersion.split("_")
+val nmsNumberVersion: Int = if (splitNmsVersion.size > 1) {
+	splitNmsVersion[1].toInt()
+} else {
+	// Handle the case where the splitNmsVersion has less than 2 elements
+	0 // or any default value
+}
 
 val Server.mainWorld get() = worlds[0]!!
 
