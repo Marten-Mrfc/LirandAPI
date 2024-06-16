@@ -15,7 +15,7 @@ import org.bukkit.plugin.Plugin
 import org.bukkit.util.Vector
 
 fun PlayerInventory.clearArmor() {
-	setArmorContents(arrayOfNulls<ItemStack?>(4))
+	armorContents = arrayOfNulls<ItemStack?>(4)
 }
 
 fun PlayerInventory.clearAll() {

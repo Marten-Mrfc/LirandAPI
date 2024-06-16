@@ -116,7 +116,7 @@ class ScoreboardControllerDSL(internal val plugin: Plugin, var title: String) : 
 		val max = lineControllers.keys.maxOrNull() ?: return
 
 		if (_viewers[player]?.scoreboard != null) return
-		val scoreboard = server.scoreboardManager?.newScoreboard ?: return
+		val scoreboard = server.scoreboardManager.newScoreboard
 
 		val objective = scoreboard.getObjective(DisplaySlot.SIDEBAR)
 			?: scoreboard.registerNewObjective(plugin.name, "dummy", title).apply {

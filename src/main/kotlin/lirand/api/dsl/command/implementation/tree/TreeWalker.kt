@@ -7,9 +7,9 @@ import lirand.api.dsl.command.implementation.tree.nodes.removeAliasedChild
 import java.util.*
 import java.util.function.Predicate
 
-internal class TreeWalker<T, R>(private val mapper: Mapper<T, R>) {
+internal open class TreeWalker<T, R>(private val mapper: Mapper<T, R>) {
 
-	protected val mappings: MutableMap<CommandNode<T>, CommandNode<R>> = IdentityHashMap()
+	private val mappings: MutableMap<CommandNode<T>, CommandNode<R>> = IdentityHashMap()
 
 
 	fun prune(root: RootCommandNode<R>, commands: Collection<CommandNode<T>>) {
@@ -53,13 +53,13 @@ internal class TreeWalker<T, R>(private val mapper: Mapper<T, R>) {
 		return result
 	}
 
-	protected fun redirect(destination: CommandNode<T>?, result: CommandNode<R>, source: T?) {
+	private fun redirect(destination: CommandNode<T>?, result: CommandNode<R>, source: T?) {
 		if (destination != null && result is MutableCommandNode<*>) {
 			(result as MutableCommandNode<R>).setRedirect(map(destination, source))
 		}
 	}
 
-	protected fun descend(children: Collection<CommandNode<T>>, command: CommandNode<R>, source: T?) {
+	private fun descend(children: Collection<CommandNode<T>>, command: CommandNode<R>, source: T?) {
 		for (child in children) {
 			val result = map(child, source)
 			if (result != null) {

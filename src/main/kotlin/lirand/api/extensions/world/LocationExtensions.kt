@@ -25,10 +25,10 @@ fun Location.spawnArrow(direction: Vector, speed: Float, spread: Float) =
 
 
 fun Location.generateTree(type: TreeType) =
-	world!!.generateTree(this, type) ?: false
+    world!!.generateTree(this, type)
 
 fun Location.generateTree(type: TreeType, delegate: BlockChangeDelegate) =
-	world!!.generateTree(this, type, delegate) ?: false
+    world!!.generateTree(this, type, delegate)
 
 
 fun Location.strikeLightning() =
@@ -37,15 +37,15 @@ fun Location.strikeLightning() =
 fun Location.strikeLightningEffect() =
 	world!!.strikeLightningEffect(this)
 
-fun Location.getNearbyEntities(x: Double, y: Double, z: Double): Collection<Entity>? =
+fun Location.getNearbyEntities(x: Double, y: Double, z: Double): Collection<Entity> =
 	world!!.getNearbyEntities(this, x, y, z)
 
 
 fun Location.createExplosion(power: Float) =
-	world!!.createExplosion(this, power) ?: false
+    world!!.createExplosion(this, power)
 
 fun Location.createExplosion(power: Float, setFire: Boolean) =
-	world!!.createExplosion(this, power, setFire) ?: false
+    world!!.createExplosion(this, power, setFire)
 
 
 inline fun <reified E : Entity> Location.spawn(noinline builder: (E.() -> Unit)?) =
@@ -55,7 +55,7 @@ inline fun <reified E : Entity> Location.spawn(noinline builder: (E.() -> Unit)?
 fun Location.spawnFallingBlock(blockData: BlockData) =
 	world!!.spawnFallingBlock(this, blockData)
 
-inline fun <reified A : AbstractArrow> Location.spawnArrow(direction: Vector, speed: Float, spread: Float): A? =
+inline fun <reified A : AbstractArrow> Location.spawnArrow(direction: Vector, speed: Float, spread: Float): A =
 	world!!.spawnArrow(this, direction, speed, spread, A::class.java)
 
 

@@ -13,7 +13,7 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 
 val PlayerMoveEvent.displaced: Boolean
-	get() = this.from.x != this.to?.x || this.from.y != this.to?.y || this.from.z != this.to?.z
+	get() = this.from.x != this.to.x || this.from.y != this.to.y || this.from.z != this.to.z
 
 /**
  * Returns the item used in the interaction

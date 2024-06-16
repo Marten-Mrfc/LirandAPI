@@ -34,7 +34,7 @@ class BrigadierLiteral<T>(
 		}
 	}
 
-	override fun removeChild(child: String): CommandNode<T>? {
+	override fun removeChild(child: String): CommandNode<T> {
 		val removed = removeAliasedChild(child)
 		for (alias in aliases) {
 			alias.removeAliasedChild(child)

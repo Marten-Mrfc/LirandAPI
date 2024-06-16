@@ -38,7 +38,7 @@ class OptionalChainDSLBuilder(
 	}
 
 
-	fun <T> option(prefixedType: PrefixedType<T>): OptionalArgumentDefinition<T> {
+	private fun <T> option(prefixedType: PrefixedType<T>): OptionalArgumentDefinition<T> {
 		this.type.options.add(prefixedType)
 
 		return OptionalArgumentDefinition(name, prefixedType)

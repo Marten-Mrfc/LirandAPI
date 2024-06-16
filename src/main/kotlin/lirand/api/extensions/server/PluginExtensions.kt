@@ -29,23 +29,23 @@ fun Plugin.getResourcesNames(path: String): List<String>? {
 	val jarPath: String = directoryURL.path.substring(5, directoryURL.path.indexOf("!"))
 
 	val jar: JarFile = try {
-		JarFile(URLDecoder.decode(jarPath, "UTF-8"));
-	} catch (exception: Exception) {
+		JarFile(URLDecoder.decode(jarPath, "UTF-8"))
+    } catch (exception: Exception) {
 		return null
 	}
 
 	val entries = jar.entries()
 
 	while (entries.hasMoreElements()) {
-		val name = entries.nextElement().name;
-		if (name.startsWith(path)) {
-			val entry: String = name.substring(path.length + 1);
-			val last: String = name.substring(name.length - 1);
+		val name = entries.nextElement().name
+        if (name.startsWith(path)) {
+			val entry: String = name.substring(path.length + 1)
+            val last: String = name.substring(name.length - 1)
 
-			if (last != File.separator) {
+            if (last != File.separator) {
 				if (entry.matches(Regex(".*[a-zA-Z0-9].*"))) {
-					result.add(entry);
-				}
+					result.add(entry)
+                }
 			}
 		}
 	}

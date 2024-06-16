@@ -32,7 +32,7 @@ internal open class Mapper<T, R> {
 		}
 	}
 
-	protected fun mapArgumentNode(node: CommandNode<T>): CommandNode<R> {
+	private fun mapArgumentNode(node: CommandNode<T>): CommandNode<R> {
 		val argument = node as ArgumentCommandNode<T, *>
 
 		return BrigadierArgument(
@@ -44,11 +44,11 @@ internal open class Mapper<T, R> {
 		)
 	}
 
-	protected fun mapLiteralNode(node: CommandNode<T>): CommandNode<R> {
+	private fun mapLiteralNode(node: CommandNode<T>): CommandNode<R> {
 		return BrigadierLiteral(node.name, command = mapCommand(node), requirement = mapRequirement(node))
 	}
 
-	protected fun mapRootNode(node: CommandNode<T>?): CommandNode<R> {
+	private fun mapRootNode(node: CommandNode<T>?): CommandNode<R> {
 		return RootCommandNode()
 	}
 

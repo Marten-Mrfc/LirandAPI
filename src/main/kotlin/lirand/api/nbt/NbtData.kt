@@ -172,10 +172,8 @@ class NbtData internal constructor(nbtTagCompound: Any?) {
 
 		other as NbtData
 
-		if (nbtTagCompound != other.nbtTagCompound) return false
-
-		return true
-	}
+        return nbtTagCompound == other.nbtTagCompound
+    }
 
 	override fun hashCode(): Int {
 		return nbtTagCompound.hashCode()
